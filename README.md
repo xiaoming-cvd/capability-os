@@ -4,13 +4,9 @@
 
 推送到 GitHub 后自动部署为在线页面（GitHub Actions → GitHub Pages）。
 
-## 在线查看
+## 在线地址
 
-推送到 `main` 分支约 1-2 分钟后，页面发布在：
-
-```
-https://<你的GitHub用户名>.github.io/<仓库名>/
-```
+**https://xiaoming-cvd.github.io/capability-os/**
 
 ## 更新能力原子
 
@@ -26,12 +22,3 @@ npm run dev
 ```
 
 构建：`npm run build`，产物在 `dist/`。
-
-## 首次推送步骤
-
-```bash
-git remote add origin https://github.com/<你的用户名>/<仓库名>.git
-git push -u origin main
-```
-
-然后在仓库 **Settings → Pages** 里把 Source 设为 **GitHub Actions**（只需设一次），之后的每次推送都会自动重新部署。
