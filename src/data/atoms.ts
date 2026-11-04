@@ -3,16 +3,40 @@
 // 一个「能力原子」= 最小可迁移的能力单元：
 //   抽象定义（它到底是什么）+ 实证场景（我在哪真的用过）
 //   + 可迁移方向 + 与其他原子的连接
+// 三层分类：专业壁垒（护城河）/ 个人品牌（外表谈吐）/ 个人品质（软实力）
 // 学习新东西时先查这里：能映射的原子直接复用，
 // 映射不上的才新建——避免能力冗余。
 // ============================================================
 
 export type AtomStatus = 'core' | 'active' | 'weak' | 'pruned'
+export type AtomLayer = 'moat' | 'brand' | 'quality'
+
+export const LAYER_META: Record<
+  AtomLayer,
+  { label: string; color: string; desc: string }
+> = {
+  moat: {
+    label: '专业壁垒',
+    color: '#7fb4a8',
+    desc: '技术与独特思考方式——别人拿不走的护城河',
+  },
+  brand: {
+    label: '个人品牌',
+    color: '#e8a04c',
+    desc: '外表与谈吐——别人第一眼看到的',
+  },
+  quality: {
+    label: '个人品质',
+    color: '#c98bb0',
+    desc: '责任、条理、照顾人——长期相处的信任来源',
+  },
+}
 
 export interface AbilityAtom {
   id: string
   name: string
   domain: Domain
+  layer: AtomLayer
   /** 抽象化定义：剥掉具体场景后，这个能力的本质动作 */
   abstraction: string
   /** 实证：我在哪些真实场景里用过它 */
@@ -59,6 +83,7 @@ export const ATOMS: AbilityAtom[] = [
     id: 'transfer-meta',
     name: '能力迁移元技能',
     domain: '认知与自我',
+    layer: 'moat',
     abstraction:
       '学任何新东西的第一步不是学，是映射：先查已有原子能覆盖多少，缺口单独补，与主线无连接的一律不碰。',
     evidence: ['本网站即此技能的外化——能力原子化的具象产物'],
@@ -72,6 +97,7 @@ export const ATOMS: AbilityAtom[] = [
     id: 'cogn-framework',
     name: '认知框架 A-F 六层',
     domain: '认知与自我',
+    layer: 'moat',
     abstraction:
       '把经验抽象成分层框架（A 回应策略 / B 沟通语法 / C 边界伦理 / D 自我审计 / E 关系本体 / F 认知创造），需要时整层调用，而不是每次重新发明。',
     evidence: ['《认知演化个人操作指南》及六层文档'],
@@ -85,8 +111,9 @@ export const ATOMS: AbilityAtom[] = [
     id: 'boundary-comms',
     name: '边界沟通（课题分离）',
     domain: '认知与自我',
+    layer: 'quality',
     abstraction:
-      '先识别这件事是谁的课题，再用「诉求→事件→感受」表达；锋利的话先找活点、缠绷带、只切一刀。',
+      '先识别这件事是谁的课题，再用「诉求→事件→感受」表达；锋利的话先找活点、缠绷带、只切一刀。会照顾人，但不献祭自己。',
     evidence: ['HSP 自我调节与关系实践的长期积累'],
     transferableTo: ['亲密关系', '团队协作', '客户与供应商沟通', '谈判'],
     keywords: ['沟通', '边界', '谈判', '关系', '表达诉求', '人际'],
@@ -95,9 +122,44 @@ export const ATOMS: AbilityAtom[] = [
     status: 'core',
   },
   {
+    id: 'reliability',
+    name: '靠谱交付（有始有终）',
+    domain: '项目落地',
+    layer: 'quality',
+    abstraction:
+      '接下的承诺一定收尾：活动办到最后一场、项目推到备案落地。烂尾是信任的唯一杀手。',
+    evidence: [
+      '社区合唱活动：从排练到演出到志愿统筹，全流程负责到收尾',
+      '大创小程序：从想法到代码完成、备案推进中',
+      'AIGC 数字人视频：四分之三进度持续推进至完成',
+    ],
+    transferableTo: ['任何被托付的事', '团队中的核心成员信誉', '考研长跑'],
+    keywords: ['责任', '靠谱', '执行力', '交付', '收尾'],
+    connections: ['pm-fullcycle', 'orderliness'],
+    level: 4,
+    status: 'core',
+  },
+  {
+    id: 'orderliness',
+    name: '多线并行管理',
+    domain: '项目落地',
+    layer: 'quality',
+    abstraction:
+      '同时推多条线也不乱：每条线有清单、有节奏点、有优先级，知道哪条可以砍、哪条不能断。',
+    evidence: [
+      '2026 秋：大创备案 + 合唱全流程 + 商挑 + 信息检索省赛 + 思客沙龙 + 微团课，多线并行无烂尾',
+    ],
+    transferableTo: ['考研多科目备考', '工作中的多项目并行', '家庭与事业平衡'],
+    keywords: ['条理', '计划', '并行', '时间管理', '清单'],
+    connections: ['reliability', 'pm-fullcycle', 'transfer-meta'],
+    level: 4,
+    status: 'core',
+  },
+  {
     id: 'pm-fullcycle',
     name: '全流程项目管理',
     domain: '项目落地',
+    layer: 'moat',
     abstraction:
       '把模糊目标拆成阶段→任务→责任人→截止时间，用节奏点（例会/检查点）维持推进，收尾必须复盘归档。',
     evidence: ['中型社区合唱活动全流程负责人：排练/视频/演出/志愿统筹，已收尾'],
@@ -111,6 +173,7 @@ export const ATOMS: AbilityAtom[] = [
     id: 'product-ship',
     name: '产品从 0 到 1 落地',
     domain: '项目落地',
+    layer: 'moat',
     abstraction:
       '需求判断→工具选型→MVP→合规交付（备案/上线）。核心不是写代码，是判断「这个方案值不值得做、能不能带出去」。',
     evidence: ['大创微信小程序：从想法到代码完成、备案推进中'],
@@ -124,6 +187,7 @@ export const ATOMS: AbilityAtom[] = [
     id: 'research-market',
     name: '市场调研方法论',
     domain: '研究与分析',
+    layer: 'moat',
     abstraction:
       '定义问题→选指标→采集→交叉验证→结论。工具（卖家精灵/AI）是放大器，判断永远自己出。',
     evidence: ['亚马逊平台选品 + 卖家精灵，完成一次完整市场调查'],
@@ -137,6 +201,7 @@ export const ATOMS: AbilityAtom[] = [
     id: 'info-retrieval',
     name: '信息检索与赛题拆解',
     domain: '研究与分析',
+    layer: 'moat',
     abstraction:
       '把一个大问题拆成可检索的子问题，选对库、选对词、交叉验证来源，再组装回整体。',
     evidence: ['全国信息检索大赛进入省赛淘汰赛'],
@@ -150,6 +215,7 @@ export const ATOMS: AbilityAtom[] = [
     id: 'excel-analysis',
     name: 'Excel 数据分析（够用级）',
     domain: '研究与分析',
+    layer: 'moat',
     abstraction:
       '清洗→透视→图表→一句话结论。标准是「够用、服务决策」，不追求炫技。',
     evidence: ['市场调查数据处理与建模练习'],
@@ -163,8 +229,9 @@ export const ATOMS: AbilityAtom[] = [
     id: 'structured-expression',
     name: '结构化表达',
     domain: '表达与叙事',
+    layer: 'brand',
     abstraction:
-      '一页只讲一个观点：结论先行→证据分层→视觉引导。先搭骨架再填肉。',
+      '一页只讲一个观点：结论先行→证据分层→视觉引导。先搭骨架再填肉——这是谈吐的底层结构。',
     evidence: ['思客沙龙：PPT/讲稿/现场筹备/新闻稿全流程'],
     transferableTo: ['商务写作', '谈判陈述', '面试', '课堂展示', '复试'],
     keywords: ['表达', 'ppt', '演讲', '写作', '展示', '面试', '陈述', '汇报'],
@@ -176,9 +243,10 @@ export const ATOMS: AbilityAtom[] = [
     id: 'video-story',
     name: '视频叙事制作',
     domain: '表达与叙事',
+    layer: 'brand',
     abstraction:
       '脚本→素材→节奏→导出的流水线思维；模板和流程一旦建好就批量复用。',
-    evidence: ['微团课视频制作完成', 'AIGC 赛道 AI 数字人创意视频完成约四分之三'],
+    evidence: ['微团课视频制作完成', 'AIGC 赛道 AI 数字人创意视频完成'],
     transferableTo: ['自媒体内容', '课程作业', '产品演示视频'],
     keywords: ['视频', '叙事', '剪辑', '内容', '自媒体'],
     connections: ['structured-expression', 'ai-orchestration'],
@@ -189,8 +257,9 @@ export const ATOMS: AbilityAtom[] = [
     id: 'ai-orchestration',
     name: 'AI 协调与提示工程',
     domain: '工具与技术',
+    layer: 'moat',
     abstraction:
-      '把目标翻译成 AI 可执行的分解指令，验收输出、迭代指令——是「指挥」，不是「代劳」，更不是「全信」。',
+      '把目标翻译成 AI 可执行的分解指令，验收输出、迭代指令——是「指挥」，不是「代劳」，更不是「全信」。2026 年 JD 新宠，已是我的优势项。',
     evidence: ['大创小程序代码全靠行业判断 + AI 协调完成', 'AI 数字人视频'],
     transferableTo: ['所有知识工作', '代码与数据处理', '写作与翻译', '研究报告'],
     keywords: ['ai', '提示词', '人工智能', 'gpt', '工具', '代码', '编程'],
@@ -202,6 +271,7 @@ export const ATOMS: AbilityAtom[] = [
     id: 'python-tool',
     name: 'Python 数据处理',
     domain: '工具与技术',
+    layer: 'moat',
     abstraction:
       'pandas 清洗与建模。已从「主轴」降级为「工具」——按需重启，不再为它单独投入整块时间。',
     evidence: ['Python 项目 1 已主动砍掉（2026-10 裁定）', '重启依赖：2027 春大挑数据处理'],
@@ -215,8 +285,9 @@ export const ATOMS: AbilityAtom[] = [
     id: 'english-biz',
     name: '英语商务沟通',
     domain: '语言与商务',
+    layer: 'brand',
     abstraction:
-      '把英语从「考试科目」升级为主武器：口语、谈判、商务写作三条线并行。',
+      '把英语从「考试科目」升级为主武器：口语、谈判、商务写作三条线并行——谈吐的国际化版本。',
     evidence: ['商挑 12 月底全英语参赛（备赛中）', '六级推迟至 2027 春（与主线兼容）'],
     transferableTo: ['MIB 复试口语', '外企面试', '国际供应链沟通'],
     keywords: ['英语', '商务', '口语', '谈判', '外贸', '六级', '面试'],
@@ -228,6 +299,7 @@ export const ATOMS: AbilityAtom[] = [
     id: 'guomao-practice',
     name: '国际贸易实务',
     domain: '语言与商务',
+    layer: 'moat',
     abstraction:
       '贸易术语→结算→单证→运输的规则系统；学它的终点是能做合规判断，不是背条款。',
     evidence: ['国贸实务（在读课程）'],
@@ -241,6 +313,7 @@ export const ATOMS: AbilityAtom[] = [
     id: 'logic-396',
     name: '逻辑与数学（396）',
     domain: '研究与分析',
+    layer: 'moat',
     abstraction:
       '形式逻辑 + 经济数学的题型套路库；靠重复形成肌肉记忆，不与专业课抢深度加工带宽。',
     evidence: ['396 数学/逻辑刚启动（2026-10）'],
@@ -254,6 +327,7 @@ export const ATOMS: AbilityAtom[] = [
     id: 'mem-path',
     name: '物流工程 / MEM 路径知识',
     domain: '项目落地',
+    layer: 'moat',
     abstraction:
       '2026-10-21 前职业备选路径的知识储备。已裁定弃用——职业主轴定为供应链商务面（MIB）。',
     evidence: ['10-21 本人终裁：弃用 199/MEM 路径，方向锁至 2027 年 6 月'],
