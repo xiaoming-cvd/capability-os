@@ -11,10 +11,12 @@ import {
   ATOMS,
   DOMAIN_COLORS,
   DOMAINS,
+  LAYER_META,
   STATUS_META,
   atomById,
   degree,
   type AbilityAtom,
+  type AtomLayer,
   type AtomStatus,
 } from '../data/atoms'
 
@@ -40,6 +42,7 @@ function LevelDots({ level }: { level: number }) {
 export default function Atoms() {
   const [params, setParams] = useSearchParams()
   const [domain, setDomain] = useState<DomainChoice>('全部')
+  const [layer, setLayer] = useState<AtomLayer | 'all'>('all')
   const [status, setStatus] = useState<AtomStatus | 'all'>('all')
 
   const focusId = params.get('focus')
@@ -50,17 +53,18 @@ export default function Atoms() {
       ATOMS.filter(
         (a) =>
           (domain === '全部' || a.domain === domain) &&
+          (layer === 'all' || a.layer === layer) &&
           (status === 'all' || a.status === status)
       ),
-    [domain, status]
+    [domain, layer, status]
   )
 
   return (
     <div className="fade-up space-y-8">
       <header className="space-y-2">
-        <h1 className="font-display text-3xl">原子库</h1>
+        <h1 className="font-display text-3xl">能力图谱</h1>
         <p className="text-sm text-muted-foreground">
-          每个原子 = 抽象定义 + 实证场景 + 可迁移方向。点开看全貌。
+          每个原子 = 抽象定义 + 实证场景 + 可迁移方向，分属三层：专业壁垒 / 个人品牌 / 个人品质。点开看全貌。
         </p>
       </header>
 
@@ -77,6 +81,22 @@ export default function Atoms() {
             }`}
           >
             {d}
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="mr-1 text-[11px] text-muted-foreground">层级</span>
+        {(['all', 'moat', 'brand', 'quality'] as const).map((l) => (
+          <button
+            key={l}
+            onClick={() => setLayer(l)}
+            className={`rounded-full border px-3.5 py-1.5 text-xs transition-colors ${
+              layer === l
+                ? 'border-primary/60 bg-primary/15 text-primary'
+                : 'border-border text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            {l === 'all' ? '全部' : LAYER_META[l].label}
           </button>
         ))}
         <span className="mx-2 hidden h-4 w-px bg-border sm:inline-block" />
@@ -124,6 +144,15 @@ export default function Atoms() {
                     }}
                   >
                     {focusAtom.domain}
+                  </span>
+                  <span
+                    className="rounded-full px-2.5 py-0.5 text-[11px]"
+                    style={{
+                      color: LAYER_META[focusAtom.layer].color,
+                      backgroundColor: `${LAYER_META[focusAtom.layer].color}1a`,
+                    }}
+                  >
+                    {LAYER_META[focusAtom.layer].label}
                   </span>
                   <span
                     className="rounded-full px-2.5 py-0.5 text-[11px]"
@@ -246,15 +275,26 @@ function AtomCard({
       className="card-hover rounded-xl border border-border bg-card/60 p-5 text-left"
     >
       <div className="flex items-center justify-between">
-        <span
-          className="rounded-full px-2.5 py-0.5 text-[11px]"
-          style={{
-            color: DOMAIN_COLORS[atom.domain],
-            backgroundColor: `${DOMAIN_COLORS[atom.domain]}1a`,
-          }}
-        >
-          {atom.domain}
-        </span>
+        <div className="flex items-center gap-1.5">
+          <span
+            className="rounded-full px-2.5 py-0.5 text-[11px]"
+            style={{
+              color: DOMAIN_COLORS[atom.domain],
+              backgroundColor: `${DOMAIN_COLORS[atom.domain]}1a`,
+            }}
+          >
+            {atom.domain}
+          </span>
+          <span
+            className="rounded-full px-2.5 py-0.5 text-[11px]"
+            style={{
+              color: LAYER_META[atom.layer].color,
+              backgroundColor: `${LAYER_META[atom.layer].color}1a`,
+            }}
+          >
+            {LAYER_META[atom.layer].label}
+          </span>
+        </div>
         <span
           className="text-[11px]"
           style={{ color: STATUS_META[atom.status].color }}
