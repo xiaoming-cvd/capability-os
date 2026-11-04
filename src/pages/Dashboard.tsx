@@ -1,26 +1,68 @@
 import { Link } from 'react-router'
 import {
   ArrowRight,
-  Atom,
-  GitBranch,
+  Compass,
+  GitFork,
+  MapPin,
   Radar,
-  Scissors,
-  Sparkles,
+  ScrollText,
+  Target,
 } from 'lucide-react'
-import { ATOMS, DOMAINS, DOMAIN_COLORS, degree, STATUS_META } from '../data/atoms'
+import { ATOMS, LAYER_META, type AtomLayer } from '../data/atoms'
+import { gapSummary } from '../data/profile'
+import { DECISIONS } from '../data/decisions'
+
+// 人生主干：职业线里程碑
+const TRUNK = [
+  {
+    time: '现在 · 2026 秋',
+    title: 'MIB 备考启动期',
+    desc: '英语升主武器（商挑 12 月全英语参赛）· 396/434 启动 · 大创收尾备案',
+    current: true,
+  },
+  {
+    time: '2027-12',
+    title: '考研初试',
+    desc: '396 经济类联考 + 434 国际商务专业基础 · 目标上外贸 MIB',
+    current: false,
+  },
+  {
+    time: '2028',
+    title: '复试 → 入学（广深）',
+    desc: '城市已裁定广深一票级 · 复试口语用商挑实证打',
+    current: false,
+  },
+  {
+    time: '2028-2030',
+    title: 'MIB + 实习',
+    desc: '供应链分析/计划方向实习 · 补齐 SQL + 业务指标实证',
+    current: false,
+  },
+  {
+    time: '2030 · 30 岁',
+    title: '独当一面的供应链人',
+    desc: '供应链分析/计划方向 · AI×数据为武器',
+    current: false,
+  },
+  {
+    time: '2035 · 35 岁',
+    title: '标签 · 现金流 · 选择权',
+    desc: '拥有自己的职业标签和说「不」的自由',
+    current: false,
+  },
+]
 
 export default function Dashboard() {
-  const core = ATOMS.filter((a) => a.status === 'core')
-  const active = ATOMS.filter((a) => a.status === 'active')
-  const weak = ATOMS.filter((a) => a.status === 'weak')
-  const pruned = ATOMS.filter((a) => a.status === 'pruned')
-  const totalEdges = ATOMS.reduce((s, a) => s + degree(a), 0) / 2
+  const summary = gapSummary()
+  const decisions = DECISIONS.length
+  const layerCount = (l: AtomLayer) => ATOMS.filter((a) => a.layer === l).length
+  const minActions = summary.gap + summary.edge
 
   const stats = [
-    { icon: Atom, label: '能力原子', value: ATOMS.length, tone: '#e8a04c' },
-    { icon: Sparkles, label: '核心原子', value: core.length, tone: '#c98bb0' },
-    { icon: GitBranch, label: '连接数', value: totalEdges, tone: '#7fb4a8' },
-    { icon: Scissors, label: '已砍冗余', value: pruned.length, tone: '#8a8578' },
+    { icon: Radar, label: '能力原子', value: ATOMS.length, tone: '#e8a04c', to: '/atoms' },
+    { icon: Target, label: '待补缺口', value: summary.gap + summary.edge, tone: '#d97a6a', to: '/gap' },
+    { icon: ScrollText, label: '已记录决策', value: decisions, tone: '#7fb4a8', to: '/decisions' },
+    { icon: Compass, label: '本月最小行动', value: minActions, tone: '#c98bb0', to: '/gap' },
   ]
 
   return (
@@ -28,39 +70,26 @@ export default function Dashboard() {
       {/* Hero */}
       <section className="space-y-5">
         <p className="text-sm tracking-[0.3em] text-primary/80">
-          CAPABILITY ATOM BASE
+          LIFE NAVIGATION SYSTEM
         </p>
         <h1 className="font-display max-w-3xl text-4xl leading-snug sm:text-5xl">
-          把能力拆成原子，
+          站在岔路口时，
           <br />
-          让每一次学习都先<span className="text-primary">迁移</span>，再新建。
+          看得见<span className="text-primary">去向</span>、<span className="text-primary">手里有什么</span>、<span className="text-primary">还差什么</span>。
         </h1>
         <p className="max-w-2xl leading-relaxed text-muted-foreground">
-          这个网站是我的「能力底座」：每个能力被抽象成最小可迁移单元——定义、实证、可迁移方向、与其他原子的连接。
-          学新东西之前先查这里：<span className="text-foreground">已有的直接复用，缺口单独补，无连接的坚决不碰。</span>
+          这不是主页，是我的私人导航系统：职业主干走到哪里、做过哪些终裁、能力三层（专业壁垒 / 个人品牌 / 个人品质）各有什么、离目标岗位还差多远——
+          <span className="text-foreground">所有影响人生抉择的东西，都存档在这里，随时可查、可审计。</span>
         </p>
-        <div className="flex flex-wrap gap-3 pt-2">
-          <Link
-            to="/learn"
-            className="inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
-          >
-            <Radar size={16} /> 接入一个新课题
-          </Link>
-          <Link
-            to="/map"
-            className="inline-flex items-center gap-2 rounded-md border border-border px-5 py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            看迁移地图 <ArrowRight size={16} />
-          </Link>
-        </div>
       </section>
 
       {/* Stats */}
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {stats.map((s) => (
-          <div
+          <Link
+            to={s.to}
             key={s.label}
-            className="rounded-xl border border-border bg-card/60 p-5"
+            className="card-hover rounded-xl border border-border bg-card/60 p-5"
           >
             <div className="flex items-center gap-2 text-muted-foreground">
               <s.icon size={15} style={{ color: s.tone }} />
@@ -69,109 +98,101 @@ export default function Dashboard() {
             <p className="font-display mt-3 text-4xl" style={{ color: s.tone }}>
               {s.value}
             </p>
-          </div>
+          </Link>
         ))}
       </section>
 
       <div className="grid gap-10 lg:grid-cols-5">
-        {/* 核心原子 */}
+        {/* 人生主干 */}
         <section className="lg:col-span-3">
-          <div className="mb-4 flex items-baseline justify-between">
-            <h2 className="font-display text-xl">核心原子 · 迁移从这里出发</h2>
-            <Link
-              to="/atoms"
-              className="text-xs text-muted-foreground hover:text-primary"
-            >
-              全部原子 →
-            </Link>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {core.map((a) => (
-              <Link
-                key={a.id}
-                to={`/atoms?focus=${a.id}`}
-                className="card-hover rounded-xl border border-border bg-card/60 p-4"
-              >
-                <div className="flex items-center justify-between">
-                  <span
-                    className="rounded-full px-2 py-0.5 text-[11px]"
-                    style={{
-                      color: DOMAIN_COLORS[a.domain],
-                      backgroundColor: `${DOMAIN_COLORS[a.domain]}1a`,
-                    }}
-                  >
-                    {a.domain}
-                  </span>
-                  <span className="text-[11px] text-muted-foreground">
-                    {degree(a)} 连接
-                  </span>
-                </div>
-                <h3 className="mt-2.5 font-medium">{a.name}</h3>
-                <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-                  {a.abstraction}
+          <h2 className="font-display mb-5 text-xl">职业主干 · 我在哪</h2>
+          <div className="relative space-y-0 pl-6">
+            {/* 竖线 */}
+            <span className="absolute bottom-5 left-[9px] top-2 w-px bg-border" />
+            {TRUNK.map((n) => (
+              <div key={n.time} className="relative pb-7 last:pb-0">
+                <span
+                  className={`absolute -left-6 top-1.5 h-3 w-3 rounded-full border-2 ${
+                    n.current
+                      ? 'border-primary bg-primary shadow-[0_0_12px_hsl(36_88%_62%/0.7)]'
+                      : 'border-border bg-background'
+                  }`}
+                />
+                <p
+                  className={`text-xs tracking-wide ${
+                    n.current ? 'text-primary' : 'text-muted-foreground'
+                  }`}
+                >
+                  {n.time}
+                  {n.current && ' ← 当前位置'}
                 </p>
-              </Link>
+                <h3 className="mt-1 font-medium">{n.title}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                  {n.desc}
+                </p>
+              </div>
             ))}
           </div>
         </section>
 
-        {/* 领域分布 + 状态 */}
-        <section className="space-y-6 lg:col-span-2">
+        {/* 已裁定岔枝 + 三层能力 */}
+        <section className="space-y-8 lg:col-span-2">
           <div>
-            <h2 className="font-display mb-4 text-xl">领域分布</h2>
+            <h2 className="font-display mb-4 text-xl">已裁定的岔枝</h2>
             <div className="space-y-3">
-              {DOMAINS.map((d) => {
-                const n = ATOMS.filter((a) => a.domain === d).length
-                if (!n) return null
-                return (
-                  <div key={d} className="flex items-center gap-3">
-                    <span className="w-20 shrink-0 text-xs text-muted-foreground">
-                      {d}
+              {DECISIONS.map((d) => (
+                <Link
+                  key={d.id}
+                  to="/decisions"
+                  className="card-hover block rounded-xl border border-border bg-card/60 p-4"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                      <GitFork size={11} className="text-primary/70" />
+                      {d.branch}
                     </span>
-                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                    <span className="text-[11px] text-muted-foreground">{d.date}</span>
+                  </div>
+                  <h3 className="mt-2 text-sm font-medium leading-snug">
+                    {d.title}
+                  </h3>
+                  <p className="mt-2 inline-flex items-center gap-1 text-xs text-primary">
+                    查看当时理由与反悔条件 <ArrowRight size={12} />
+                  </p>
+                </Link>
+              ))}
+            </div>
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+              只有做过终裁的岔枝才挂在这里——没想清楚的不硬画，想清楚了必存档。
+            </p>
+          </div>
+
+          <div>
+            <h2 className="font-display mb-4 text-xl">能力三层分布</h2>
+            <div className="space-y-3">
+              {(Object.keys(LAYER_META) as AtomLayer[]).map((l) => {
+                const meta = LAYER_META[l]
+                const n = layerCount(l)
+                return (
+                  <div key={l}>
+                    <div className="mb-1.5 flex items-center justify-between">
+                      <span className="text-sm" style={{ color: meta.color }}>
+                        {meta.label}
+                      </span>
+                      <span className="text-xs text-muted-foreground">{n} 个</span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-muted">
                       <div
                         className="h-full rounded-full"
                         style={{
                           width: `${(n / ATOMS.length) * 100}%`,
-                          backgroundColor: DOMAIN_COLORS[d],
+                          backgroundColor: meta.color,
                         }}
                       />
                     </div>
-                    <span className="w-6 text-right text-xs">{n}</span>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          <div>
-            <h2 className="font-display mb-4 text-xl">原子状态</h2>
-            <div className="space-y-2.5">
-              {(['core', 'active', 'weak', 'pruned'] as const).map((s) => {
-                const meta = STATUS_META[s]
-                const n =
-                  s === 'core'
-                    ? core.length
-                    : s === 'active'
-                      ? active.length
-                      : s === 'weak'
-                        ? weak.length
-                        : pruned.length
-                return (
-                  <div
-                    key={s}
-                    className="flex items-center justify-between rounded-lg border border-border bg-card/60 px-4 py-2.5"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <span
-                        className="h-2 w-2 rounded-full"
-                        style={{ backgroundColor: meta.color }}
-                      />
-                      <span className="text-sm">{meta.label}</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                      {n} · {meta.desc}
-                    </span>
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      {meta.desc}
+                    </p>
                   </div>
                 )
               })}
@@ -180,35 +201,42 @@ export default function Dashboard() {
         </section>
       </div>
 
-      {/* 使用原则 */}
+      {/* 当前聚焦 */}
       <section className="rounded-2xl border border-primary/25 bg-primary/5 p-7">
-        <h2 className="font-display text-xl">这个底座的三条使用原则</h2>
-        <ol className="mt-5 grid gap-5 md:grid-cols-3">
+        <h2 className="flex items-center gap-2 font-display text-xl">
+          <MapPin size={18} className="text-primary" /> 当前聚焦 · 2026 Q4
+        </h2>
+        <div className="mt-5 grid gap-5 md:grid-cols-3">
           {[
             {
-              t: '先映射，后学习',
-              d: '接到新课题，先去「学习接入」页查已有原子能覆盖多少。覆盖 60% 以上的课题，学习成本直接腰斩。',
+              t: '主线：考研三科启动',
+              d: '英语每日不断（唯一标准）；396 数学/逻辑进入常规；434 搭框架。供应链业务指标那页纸 12 月前完成。',
             },
             {
-              t: '缺口最小化补齐',
-              d: '映射不上的部分单独建「新原子」，并强制写清楚它与哪个已有原子连接——连不上的新东西不学。',
+              t: '检验场：商挑 12 月',
+              d: '全英语参赛 = 口语+商务表达的公开检验。赛后产出 300 词英文复盘，变成简历素材。',
             },
             {
-              t: '定期砍冗余',
-              d: '每月看一次「冗余审计」：弱连接原子要么强化、要么降级、要么砍掉，防止能力库堆积废件。',
+              t: '缺口突击：SQL',
+              d: '离市场要求最远的一项，但不等考研：每天 30 分钟 × 2 周，12 月前刷完四件套。详见缺口分析页。',
             },
-          ].map((x, i) => (
-            <li key={x.t} className="space-y-2">
-              <span className="font-display text-2xl text-primary/70">
-                0{i + 1}
-              </span>
+          ].map((x) => (
+            <div key={x.t} className="space-y-2">
               <h3 className="font-medium">{x.t}</h3>
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {x.d}
               </p>
-            </li>
+            </div>
           ))}
-        </ol>
+        </div>
+        <div className="mt-6 border-t border-primary/20 pt-5">
+          <Link
+            to="/gap"
+            className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+          >
+            去看完整缺口分析 <ArrowRight size={14} />
+          </Link>
+        </div>
       </section>
     </div>
   )
