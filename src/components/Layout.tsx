@@ -3,10 +3,11 @@ import { Atom } from 'lucide-react'
 
 const NAV = [
   { to: '/', label: '总览', end: true },
-  { to: '/atoms', label: '原子库' },
+  { to: '/atoms', label: '能力图谱' },
   { to: '/map', label: '迁移地图' },
-  { to: '/learn', label: '学习接入' },
-  { to: '/audit', label: '冗余审计' },
+  { to: '/gap', label: '缺口分析' },
+  { to: '/decisions', label: '决策日志' },
+  { to: '/audit', label: '审计' },
 ]
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -22,7 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               能力原子库
             </span>
             <span className="hidden text-xs text-muted-foreground sm:inline">
-              · 清微子的迁移底座
+              · 人生导航系统
             </span>
           </NavLink>
           <nav className="flex items-center gap-1">
