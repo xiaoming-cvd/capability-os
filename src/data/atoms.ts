@@ -204,7 +204,10 @@ export const ATOMS: AbilityAtom[] = [
     layer: 'moat',
     abstraction:
       '把一个大问题拆成可检索的子问题，选对库、选对词、交叉验证来源，再组装回整体。',
-    evidence: ['全国信息检索大赛进入省赛淘汰赛'],
+    evidence: [
+      '全国信息检索大赛进入省赛淘汰赛',
+      '深圳大学 MIB 全程数据核验：学费/学制/拟招/复试线逐项查证，标注来源等级与核验路径（2026-11）',
+    ],
     transferableTo: ['考研 434 资料搜集', '论文写作', '合规检索', '供应商尽调'],
     keywords: ['检索', '信息', '搜索', '资料', '论文', '尽调', '合规'],
     connections: ['research-market', 'transfer-meta'],
