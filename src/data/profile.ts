@@ -101,7 +101,7 @@ export const GAP_DIMENSIONS: GapDimension[] = [
     requiredLevel: 4,
     currentLevel: 3,
     relatedAtomIds: ['english-biz'],
-    fact: '商挑 12 月全英语参赛是现成检验场；六级已排到 2027 春，与主线兼容。',
+    fact: '商挑 12 月全英语参赛是现成检验场；六级已排到 2027 春，与主线兼容。考研侧按英语一标准建——深大冲档的入场券是模考 70+（2026-11 选校校准）。',
     nextAction: '商挑参赛后写一篇 300 词英文复盘（不追求发表，追求写完），作为口语之外的写作实证。',
     priority: 'high',
   },
